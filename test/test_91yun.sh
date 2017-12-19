@@ -1,11 +1,11 @@
 #!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 export PATH
-echo "·þÎñÆ÷Ìá¹©ÉÌ£¨host provider£©[default:Enter]"
+echo "æœåŠ¡å™¨æä¾›å•†ï¼ˆhost providerï¼‰[default:Enter]"
 read hostp
-echo "¿ªÊ¼²âÊÔÖÐ£¬»áÐèÒªµãÊ±¼ä£¬ÇëÉÔºó"
-#===============================ÒÔÏÂÊÇ¸÷ÀàÒªÓÃµ½µÄº¯Êý========================================
-#teddeyµÄbesh²âÊÔÍøÂçÏÂÔØºÍIOÓÃµ½µÄ
+echo "å¼€å§‹æµ‹è¯•ä¸­ï¼Œä¼šéœ€è¦ç‚¹æ—¶é—´ï¼Œè¯·ç¨åŽ"
+#===============================ä»¥ä¸‹æ˜¯å„ç±»è¦ç”¨åˆ°çš„å‡½æ•°========================================
+#teddeyçš„beshæµ‹è¯•ç½‘ç»œä¸‹è½½å’ŒIOç”¨åˆ°çš„
 get_opsy() {
     [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
     [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
@@ -78,35 +78,35 @@ speed_v6() {
 io_test() {
     (LANG=en_US dd if=/dev/zero of=test_$$ bs=64k count=16k conv=fdatasync && rm -f test_$$ ) 2>&1 | awk -F, '{io=$NF} END { print io}' | sed 's/^[ \t]*//;s/[ \t]*$//'
 }
-#=================teddeyÓÃµ½µÄº¯Êý½áÊø=================================================
+#=================teddeyç”¨åˆ°çš„å‡½æ•°ç»“æŸ=================================================
 
-#=================ÒÔÏÂÊÇÎÒ×Ô¼ºÐ´µÄÍøÂçmtrºÍpingÓÃµ½µÄº¯Êý==============================
+#=================ä»¥ä¸‹æ˜¯æˆ‘è‡ªå·±å†™çš„ç½‘ç»œmtrå’Œpingç”¨åˆ°çš„å‡½æ•°==============================
 
-#²âÊÔÀ´Â·Â·ÓÉ
+#æµ‹è¯•æ¥è·¯è·¯ç”±
 mtrgo(){
 	mtrurl=$1
 	nodename=$2
-	echo "===²âÊÔ [$nodename] µ½ÕâÌ¨·þÎñÆ÷µÄÂ·ÓÉ===" | tee -a $logfilename
+	echo "===æµ‹è¯• [$nodename] åˆ°è¿™å°æœåŠ¡å™¨çš„è·¯ç”±===" | tee -a $logfilename
 	mtrgostr=$(curl -s "$mtrurl")
 	#echo $mtrgostr >> $logfilename
 	echo $mtrgostr > mtrlog.log
 	mtrgostrback=$(curl -s -d @mtrlog.log "http://test.91yun.org/traceroute.php")
 	rm -rf mtrlog.log
 	echo -e $mtrgostrback | awk -F '^' '{printf("%-2s\t%-16s\t%-35s\t%-30s\t%-25s\n",$1,$2,$3,$4,$5)}' | tee -a $logfilename
-	echo -e "=== [$nodename] Â·ÓÉ²âÊÔ½áÊø===\n\n" | tee -a $logfilename	
+	echo -e "=== [$nodename] è·¯ç”±æµ‹è¯•ç»“æŸ===\n\n" | tee -a $logfilename	
 }
 
-#²âÊÔ»Ø³ÌÂ·ÓÉ
+#æµ‹è¯•å›žç¨‹è·¯ç”±
 mtrback(){
-	echo "===²âÊÔ [$2] µÄ»Ø³ÌÂ·ÓÉ===" | tee -a $logfilename
+	echo "===æµ‹è¯• [$2] çš„å›žç¨‹è·¯ç”±===" | tee -a $logfilename
 	mtr -r -c 10 $1 | tee -a $logfilename
-	echo -e "===»Ø³Ì [$2] Â·ÓÉ²âÊÔ½áÊø===\n\n" | tee -a $logfilename	
+	echo -e "===å›žç¨‹ [$2] è·¯ç”±æµ‹è¯•ç»“æŸ===\n\n" | tee -a $logfilename	
 
 }
 
-#²âÊÔÈ«¹úpingÖµ
+#æµ‹è¯•å…¨å›½pingå€¼
 pingtest(){
-	echo "===¿ªÊ¼½øÐÐÈ«¹úPING²âÊÔ===" | tee -a $logfilename
+	echo "===å¼€å§‹è¿›è¡Œå…¨å›½PINGæµ‹è¯•===" | tee -a $logfilename
 	pingurl="http://www.ipip.net/ping.php?a=send&host=$1&area%5B%5D=china"
 	pingstr=$(curl -s "$pingurl")
 	#echo $pingstr >> $logfilename
@@ -120,22 +120,22 @@ pingtest(){
 	echo "===ping show===" >> $logfilename
 	echo -e $pingstrback | awk -F '^' '{printf("%-10s\t%-10s\t%-30s\t%-10s\t%-30s\t%-30s\t%-30s\n",$1,$2,$3,$4,$5,$6,$7)}' | tee -a $logfilename
 	echo -e "===ping show end===\n\n" >> $logfilename
-	echo "===½øÐÐÈ«¹úPING²âÊÔ½áÊø===" | tee -a $logfilename
+	echo "===è¿›è¡Œå…¨å›½PINGæµ‹è¯•ç»“æŸ===" | tee -a $logfilename
 	
 }
 
-#²âÊÔÌø°åping
-#²ÎÊý1,pingµÄµØÖ·
-#²ÎÊý2,ÃèÊö
+#æµ‹è¯•è·³æ¿ping
+#å‚æ•°1,pingçš„åœ°å€
+#å‚æ•°2,æè¿°
 testping()
 {
 	echo "{start testing $2 ping}" | tee -a $logfilename
 	ping -c 10 $1 | tee -a $logfilename
 	echo "{end testing}" | tee -a $logfilename
 }
-#==========================×ÔÓÃº¯Êý½áÊø========================================
+#==========================è‡ªç”¨å‡½æ•°ç»“æŸ========================================
 
-#»ñÈ¡¸÷ÖÖÏµÍ³ÐÅÏ¢
+#èŽ·å–å„ç§ç³»ç»Ÿä¿¡æ¯
 cname=$( awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' )
 cores=$( awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo )
 freq=$( awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' )
@@ -149,15 +149,15 @@ host=$hostp
 up=$( awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60;d=$1%60} {printf("%ddays, %d:%d:%d\n",a,b,c,d)}' /proc/uptime )
 kern=$( uname -r )
 ipv6=$( wget -qO- -t1 -T2 ipv6.icanhazip.com )
-IP=$(curl -s myip.ipip.net | awk -F ' ' '{print $2}' | awk -F '£º' '{print $2}')
-IPaddr=$(curl -s myip.ipip.net | awk -F '£º' '{print $3}')
+IP=$(curl -s myip.ipip.net | awk -F ' ' '{print $2}' | awk -F 'ï¼š' '{print $2}')
+IPaddr=$(curl -s myip.ipip.net | awk -F 'ï¼š' '{print $3}')
 if [ "$IP" == "" ]; then
-	IP=$(curl -s ip.cn | awk -F ' ' '{print $2}' | awk -F '£º' '{print $2}')
-	IPaddr=$(curl -s ip.cn | awk -F '£º' '{print $3}')	
+	IP=$(curl -s ip.cn | awk -F ' ' '{print $2}' | awk -F 'ï¼š' '{print $2}')
+	IPaddr=$(curl -s ip.cn | awk -F 'ï¼š' '{print $3}')	
 fi
 backtime=`date +%Y%m%d`
 logfilename="test91yun.log"
-#²é¿´ÐéÄâ»¯¼¼Êõ£º
+#æŸ¥çœ‹è™šæ‹ŸåŒ–æŠ€æœ¯ï¼š
 yum install -y gcc gcc-c++ gdb
 wget http://people.redhat.com/~rjones/virt-what/files/virt-what-1.12.tar.gz
 tar zxvf virt-what-1.12.tar.gz
@@ -169,15 +169,15 @@ cd ..
 rm -rf virt-what*
 
 
-yum install -y mtr || { apt-get update;apt-get install -y mtr; } || { echo "mtrÃ»°²×°³É¹¦£¬³ÌÐòÔÝÍ£";exit 1; }
-yum -y install wget || {  apt-get update;apt-get install -y wget; } || { echo "wgetÃ»°²×°³É¹¦£¬³ÌÐòÔÝÍ£";exit 1; }
-yum -y install curl || { apt-get update;apt-get install -y curl; } || { echo "curl×Ô¶¯°²×°Ê§°Ü£¬Çë×ÔÐÐÊÖ¶¯°²×°curlºóÔÙÖØÐÂ¿ªÊ¼";exit 1; }
+yum install -y mtr || { apt-get update;apt-get install -y mtr; } || { echo "mtræ²¡å®‰è£…æˆåŠŸï¼Œç¨‹åºæš‚åœ";exit 1; }
+yum -y install wget || {  apt-get update;apt-get install -y wget; } || { echo "wgetæ²¡å®‰è£…æˆåŠŸï¼Œç¨‹åºæš‚åœ";exit 1; }
+yum -y install curl || { apt-get update;apt-get install -y curl; } || { echo "curlè‡ªåŠ¨å®‰è£…å¤±è´¥ï¼Œè¯·è‡ªè¡Œæ‰‹åŠ¨å®‰è£…curlåŽå†é‡æ–°å¼€å§‹";exit 1; }
 
-#¸²¸ÇÒÑÓÐÎÄ¼þ
-echo "====¿ªÊ¼¼ÇÂ¼²âÊÔÐÅÏ¢====" > $logfilename
+#è¦†ç›–å·²æœ‰æ–‡ä»¶
+echo "====å¼€å§‹è®°å½•æµ‹è¯•ä¿¡æ¯====" > $logfilename
 
-#°ÑÏµÍ³ÐÅÏ¢Ð´ÈëÈÕÖ¾ÎÄ¼þ
-echo "===ÏµÍ³»ù±¾ÐÅÏ¢===" | tee -a $logfilename
+#æŠŠç³»ç»Ÿä¿¡æ¯å†™å…¥æ—¥å¿—æ–‡ä»¶
+echo "===ç³»ç»ŸåŸºæœ¬ä¿¡æ¯===" | tee -a $logfilename
 echo "CPU:$cname" | tee -a $logfilename
 echo "cores:$cores" | tee -a $logfilename
 echo "freq:$freq" | tee -a $logfilename
@@ -197,15 +197,15 @@ echo -e "\n\n" | tee -a $logfilename
 
 
 
-#¿ªÊ¼²âÊÔ´ø¿í
-echo "===¿ªÊ¼²âÊÔ´ø¿í===" | tee -a $logfilename
+#å¼€å§‹æµ‹è¯•å¸¦å®½
+echo "===å¼€å§‹æµ‹è¯•å¸¦å®½===" | tee -a $logfilename
 wget -O speedtest-cli https://raw.githubusercontent.com/91yun/speedtest-cli/master/speedtest_cli.py 1>/dev/null 2>&1
 python speedtest-cli --share | tee -a $logfilename
-echo -e "===´ø¿í²âÊÔ½áÊø==\n\n" | tee -a $logfilename
+echo -e "===å¸¦å®½æµ‹è¯•ç»“æŸ==\n\n" | tee -a $logfilename
 rm -rf speedtest-cli
 
-#¿ªÊ¼²âÊÔÏÂÔØËÙ¶ÈºÍIOÐÔÄÜ
-echo "===¿ªÊ¼²âÊÔÏÂÔØËÙ¶ÈºÍIOÐÔÄÜ===" | tee -a $logfilename
+#å¼€å§‹æµ‹è¯•ä¸‹è½½é€Ÿåº¦å’ŒIOæ€§èƒ½
+echo "===å¼€å§‹æµ‹è¯•ä¸‹è½½é€Ÿåº¦å’ŒIOæ€§èƒ½===" | tee -a $logfilename
 next
 
 if  [ -e '/usr/bin/wget' ]; then
@@ -242,31 +242,31 @@ echo "I/O speed(3rd run) : $io3" | tee -a $logfilename
 echo "Average I/O: $ioavg MB/s" | tee -a $logfilename
 echo ""
 
-#¿ªÊ¼²âÊÔÀ´µÄÂ·ÓÉ
-mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=9&ip=$IP" "¹ãÖÝµçÐÅ£¨³¬¼¶ÐÅÏ¢¸Û£©"
-mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=5&ip=$IP" "ÉÏº£µçÐÅ"
-mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=12&ip=$IP" "ÖØÇìÁªÍ¨"
-mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=2&ip=$IP" "Ìì½òÒÆ¶¯"
+#å¼€å§‹æµ‹è¯•æ¥çš„è·¯ç”±
+mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=9&ip=$IP" "å¹¿å·žç”µä¿¡ï¼ˆè¶…çº§ä¿¡æ¯æ¸¯ï¼‰"
+mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=5&ip=$IP" "ä¸Šæµ·ç”µä¿¡"
+mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=12&ip=$IP" "é‡åº†è”é€š"
+mtrgo "http://www.ipip.net/traceroute.php?as=1&a=get&n=1&id=2&ip=$IP" "å¤©æ´¥ç§»åŠ¨"
 
-#¿ªÊ¼²âÊÔ»Ø³ÌÂ·ÓÉ
-mtrback "58.63.244.254" "¹ãÖÝµçÐÅ£¨³¬¼¶ÐÅÏ¢¸Û£©"
-mtrback "222.73.199.97" "ÉÏº£µçÐÅ"
-mtrback "113.207.32.65" "ÖØÇìÁªÍ¨"
-mtrback "211.103.87.9" "Ìì½òÒÆ¶¯"
+#å¼€å§‹æµ‹è¯•å›žç¨‹è·¯ç”±
+mtrback "58.63.244.254" "å¹¿å·žç”µä¿¡ï¼ˆè¶…çº§ä¿¡æ¯æ¸¯ï¼‰"
+mtrback "222.73.199.97" "ä¸Šæµ·ç”µä¿¡"
+mtrback "113.207.32.65" "é‡åº†è”é€š"
+mtrback "211.103.87.9" "å¤©æ´¥ç§»åŠ¨"
 
-#¿ªÊ¼½øÐÐPING²âÊÔ
+#å¼€å§‹è¿›è¡ŒPINGæµ‹è¯•
 pingtest $IP
 
-#¿ªÊ¼²âÊÔÌø°åping
-echo "===¿ªÊ¼²âÊÔÌø°åping===" >> $logfilename
-testping speedtest.tokyo.linode.com LinodeÈÕ±¾
-testping hnd-jp-ping.vultr.com VultrÈÕ±¾
-testping 192.157.214.6 BudgetvmÂåÉ¼í¶
-testping downloadtest.kdatacenter.com kdatacenterº«¹úSK
-testping 210.92.18.1 ÐÇ¹âº«¹úKT
-echo "===Ìø°åping²âÊÔ½áÊø===" >> $logfilename
+#å¼€å§‹æµ‹è¯•è·³æ¿ping
+echo "===å¼€å§‹æµ‹è¯•è·³æ¿ping===" >> $logfilename
+testping speedtest.tokyo.linode.com Linodeæ—¥æœ¬
+testping hnd-jp-ping.vultr.com Vultræ—¥æœ¬
+testping 192.157.214.6 Budgetvmæ´›æ‰çŸ¶
+testping downloadtest.kdatacenter.com kdatacenteréŸ©å›½SK
+testping 210.92.18.1 æ˜Ÿå…‰éŸ©å›½KT
+echo "===è·³æ¿pingæµ‹è¯•ç»“æŸ===" >> $logfilename
 
-#ÉÏ´«ÎÄ¼þ
+#ä¸Šä¼ æ–‡ä»¶
 #resultstr=$(curl -s -T $logfilename "http://test.91yun.org/logfileupload.php")
 #echo -e $resultstr | tee -a $logfilename
 tee -a $logfilename
